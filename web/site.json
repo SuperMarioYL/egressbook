@@ -1,0 +1,236 @@
+{
+  "schema": 3,
+  "name": "egressbook",
+  "github": "https://github.com/SuperMarioYL/egressbook",
+  "palette": "auto",
+  "lang": {
+    "primary": "en",
+    "toggle": true
+  },
+  "hero": {
+    "headline": {
+      "en": "What left your machine — named, mapped, signed.",
+      "zh": "离开你机器的，是什么——逐项点名、按目的地映射、已签名。"
+    },
+    "sub": {
+      "en": "egressbook turns your coding agents' local session logs into a signed egress disclosure ledger. Retrospective, evidence-linked, zero network calls.",
+      "zh": "egressbook 把编码 Agent 的本地会话日志变成一份签名的出站披露账本。回溯过去、证据可溯源、零网络请求。"
+    },
+    "href": "#quickstart"
+  },
+  "advantages": [
+    {
+      "title": {
+        "en": "Points backwards in time",
+        "zh": "指向过去"
+      },
+      "body": {
+        "en": "Tripwires catch the next unauthorized connection; gateways see only traffic routed through them. egressbook reconstructs months of past sessions from the logs already on disk.",
+        "zh": "绊线只能抓下一次未授权连接，网关只看得见流经它的流量。egressbook 从磁盘上已有的日志重建过去几个月的会话。"
+      }
+    },
+    {
+      "title": {
+        "en": "A ledger, not a dashboard",
+        "zh": "是账本，不是仪表盘"
+      },
+      "body": {
+        "en": "Every item carries an evidence locator back to the exact log line, the whole artifact is ed25519-signed, and any edit after signing fails verification. It is an audit asset you can diff across sessions.",
+        "zh": "每个条目都带回到精确日志行的证据定位符；整份工件经 ed25519 签名，签名后任何改动都会校验失败。这是一份可跨会话 diff 的审计资产。"
+      }
+    },
+    {
+      "title": {
+        "en": "Coverage honesty",
+        "zh": "覆盖度诚实"
+      },
+      "body": {
+        "en": "ZCode logs carry full outbound request bodies; Codex records provider, instructions and tool outputs; Claude Code logs omit the system prompt and per-session provider — egressbook prints those as explicit gaps instead of guessing.",
+        "zh": "ZCode 日志记录完整出站请求体；Codex 记录厂商、指令与工具输出；Claude Code 日志不含系统提示词与每会话厂商——egressbook 把这些打印成显式缺口，而不是猜测。"
+      }
+    },
+    {
+      "title": {
+        "en": "Offline by construction",
+        "zh": "构造上离线"
+      },
+      "body": {
+        "en": "A disclosure tool that phones home would be a joke. The binary performs zero network calls — verify it with a firewall.",
+        "zh": "会外联的披露工具是个笑话。这个二进制零网络请求——你可以用防火墙验证。"
+      }
+    }
+  ],
+  "demo": {
+    "title": {
+      "en": "Recorded demo — sample home, three harnesses",
+      "zh": "实录演示——样本环境，三个 harness"
+    },
+    "note": {
+      "en": "Self-contained sample home (redacted content); the same run is recorded in the repo's docs/demo-results.json.",
+      "zh": "自包含样本环境（内容已脱敏）；同一次运行记录在仓库 docs/demo-results.json。"
+    },
+    "source": "https://github.com/SuperMarioYL/egressbook/blob/main/docs/demo-results.json",
+    "steps": [
+      {
+        "label": "scan",
+        "body": "Detects agent logs and reports per-harness coverage",
+        "image": "/assets/scan-dark.svg",
+        "command": "egressbook scan --home demo-home",
+        "output": "zcode        sessions: found=1 parsed=1\ncodex        sessions: found=1 parsed=1\nclaude-code  sessions: found=1 parsed=1\n      gap: claude-code: system prompt is harness-side and not written to session logs\n      gap: claude-code: model provider is not recorded per-session in the log"
+      },
+      {
+        "label": "ledger",
+        "body": "Signed, destination-mapped disclosure ledger",
+        "image": "/assets/ledger-dark.svg",
+        "command": "egressbook ledger --home demo-home",
+        "output": "DESTINATION MAP (outbound bytes by provider)\n  Zhipu (GLM)            240 bytes\n  OpenAI                 154 bytes\n  Anthropic (Claude)       63 bytes\nsignature: ed25519 content_sha256=6156ee55…"
+      },
+      {
+        "label": "diff",
+        "body": "What changed in what leaves, last week",
+        "image": "/assets/diff-dark.svg",
+        "command": "egressbook diff --home demo-home --since 1w",
+        "output": "NEW DESTINATIONS\n  + Zhipu (GLM) (+240 bytes, new destination)\nNEW PAYLOAD KINDS\n  + git_artifact"
+      },
+      {
+        "label": "verify",
+        "body": "Any edit after signing fails",
+        "image": "/assets/verify-dark.svg",
+        "command": "egressbook verify ledger.json",
+        "output": "signature OK (ed25519, content_sha256=6156ee55…, 11 items)"
+      }
+    ]
+  },
+  "quickstart": {
+    "title": "Run it on your machine",
+    "body": "No config, no account, no API key. Reads only local logs.",
+    "steps": [
+      {
+        "title": "Install",
+        "code": "go install github.com/SuperMarioYL/egressbook@latest"
+      },
+      {
+        "title": "See what agent logs exist",
+        "code": "egressbook scan"
+      },
+      {
+        "title": "Build the signed ledger",
+        "code": "egressbook ledger"
+      },
+      {
+        "title": "Export the HTML report",
+        "code": "egressbook report --html egressbook-report.html"
+      },
+      {
+        "title": "What changed in what leaves",
+        "code": "egressbook diff --since 2w"
+      }
+    ]
+  },
+  "limitations": [
+    "The ledger reconstructs everything logged, not everything sent — channels absent from local logs cannot be attested and are labeled as gaps.",
+    "v0.1 ships parsers for ZCode, Codex, and Claude Code session logs; Cursor support is on the roadmap.",
+    "Classification of file_content / code_snippet uses conservative path-and-fence heuristics; borderline blocks may be labeled user_message."
+  ],
+  "scene": {
+    "kind": "neon-graph",
+    "fallback": "/assets/scene-dark.svg",
+    "fallbackLight": "/assets/scene-light.svg",
+    "caption": {
+      "en": "Your machine on the left; every destination it talked to, on the right.",
+      "zh": "左边是你的机器；右边是它交谈过的每一个目的地。"
+    }
+  },
+  "story": {
+    "intro": {
+      "title": {
+        "en": "Two disclosures, one unanswerable question",
+        "zh": "两次披露，一个无人能答的问题"
+      },
+      "body": {
+        "en": "In September 2026 two independent researchers documented a widely-used coding agent silently uploading Git history to its vendor's cloud — 462 combined Hacker News points, discovery by outsiders, forensics by hand. Every affected user had the same question and no tool to answer it: what of mine already left this machine, and to whom?",
+        "zh": "2026 年 9 月，两位独立研究者证实一个广泛使用的编码 Agent 在静默上传 Git 历史到厂商云端——Hacker News 合计 462 分，发现来自外部，取证靠手工。每个受影响的用户都有同一个问题，却没有工具能回答：已经离开我这台机器的是什么、去了谁那里？"
+      }
+    },
+    "sections": [
+      {
+        "title": {
+          "en": "Parse → classify → sign",
+          "zh": "解析 → 分类 → 签名"
+        },
+        "body": {
+          "en": "Three parsers read the session-log formats of ZCode (including its full outbound request bodies), Codex, and Claude Code. Every payload block is classified — system prompt, user message, file content, code snippet, tool result, git artifact — and mapped to the provider it was sent to. The result is canonicalized and signed with a persistent ed25519 key.",
+          "zh": "三个解析器读取 ZCode（含完整出站请求体）、Codex 与 Claude Code 的会话日志格式。每个载荷块被分类——系统提示词、用户消息、文件内容、代码片段、工具结果、git 工件——并映射到它被发送到的厂商。结果经规范化后用持久 ed25519 密钥签名。"
+        },
+        "image": {
+          "light": "/assets/architecture-light.svg",
+          "dark": "/assets/architecture-dark.svg",
+          "alt": {
+            "zh": "解析、分类、签名三段流水线",
+            "en": "Parse, classify, sign pipeline"
+          }
+        }
+      },
+      {
+        "title": {
+          "en": "The destination map",
+          "zh": "目的地映射"
+        },
+        "body": {
+          "en": "The ledger aggregates outbound bytes per destination and per payload kind, so the first thing you see is the shape of your exposure: which vendors hold how much of your context. Every row is drillable to the evidence line.",
+          "zh": "账本按目的地与载荷类型聚合出站字节，你第一眼看到的就是暴露的形状：哪些厂商持有你多少上下文。每一行都能下钻到证据行。"
+        },
+        "image": {
+          "light": "/assets/destmap-light.svg",
+          "dark": "/assets/destmap-dark.svg",
+          "alt": {
+            "zh": "按厂商聚合的出站字节映射",
+            "en": "Outbound bytes mapped by provider"
+          }
+        }
+      },
+      {
+        "title": {
+          "en": "Diff after every agent update",
+          "zh": "每次 Agent 升级后 diff"
+        },
+        "body": {
+          "en": "The recurring ritual: after your agent updates, run egressbook diff and see whether anything new started leaving — new destinations, new payload kinds, per-destination deltas. A signed record of what changed, not a feeling.",
+          "zh": "可复利的习惯：Agent 升级后跑一次 diff，看是否有新东西开始外流——新目的地、新载荷类型、按目的地的增量。一份关于变化的签名记录，而不是一种感觉。"
+        },
+        "image": {
+          "light": "/assets/delta-light.svg",
+          "dark": "/assets/delta-dark.svg",
+          "alt": {
+            "zh": "两次账本之间的差异对比",
+            "en": "Delta between two ledgers"
+          }
+        }
+      }
+    ],
+    "details": [
+      {
+        "title": {
+          "en": "Coverage honesty",
+          "zh": "覆盖度诚实"
+        },
+        "body": {
+          "en": "The report labels what each harness's logs can and cannot prove, per harness, before you read a single number.",
+          "zh": "报告在你读任何数字之前，先按 harness 标注其日志能证明与不能证明的边界。"
+        },
+        "code": "egressbook scan\nclaude-code  sessions: found=1 parsed=1\n      gap: system prompt is harness-side and not written to session logs"
+      },
+      {
+        "title": {
+          "en": "Verify a shared ledger",
+          "zh": "校验一份分享来的账本"
+        },
+        "body": {
+          "en": "A reviewer can check the signature of a ledger you hand them; any edit after signing fails.",
+          "zh": "审查者可以校验你交给他们的账本签名；签名后任何改动都会失败。"
+        },
+        "code": "egressbook verify ledger.json"
+      }
+    ]
+  }
+}

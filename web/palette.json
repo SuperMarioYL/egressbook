@@ -1,0 +1,38 @@
+{
+  "mode": "auto",
+  "id": "d7e656-98e76a-f6e2ac-e9e51c007b4f",
+  "identity": "https://github.com/supermarioyl/egressbook",
+  "primary": "#d7e656",
+  "secondary": "#98e76a",
+  "highlight": "#f6e2ac",
+  "dark": {
+    "bg": "#090c0d",
+    "panel": "#121717",
+    "code": "#131713",
+    "ink": "#fdf9ee",
+    "muted": "#afb9a8",
+    "line": "#363c1d",
+    "primary": "#d7e656",
+    "secondary": "#98e76a",
+    "highlight": "#f6e2ac",
+    "accent": "#d7e656",
+    "buttonStart": "#747c2e",
+    "buttonEnd": "#56823c",
+    "buttonText": "#ffffff"
+  },
+  "light": {
+    "bg": "#fefef9",
+    "panel": "#fdfef7",
+    "code": "#fcfdf3",
+    "ink": "#252a1c",
+    "muted": "#6d7869",
+    "line": "#f3f7cb",
+    "primary": "#727a2e",
+    "secondary": "#55803b",
+    "highlight": "#7f7459",
+    "accent": "#727a2e",
+    "buttonStart": "#747c2e",
+    "buttonEnd": "#56823c",
+    "buttonText": "#ffffff"
+  }
+}
