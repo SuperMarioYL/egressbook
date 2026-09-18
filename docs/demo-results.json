@@ -1,0 +1,81 @@
+{
+  "scenario": "self-contained sample home (3 harness session logs, redacted sample content)",
+  "commands": [
+    {
+      "cmd": [
+        "egressbook",
+        "scan",
+        "--home",
+        "demo-home"
+      ],
+      "exit": 0
+    },
+    {
+      "cmd": [
+        "egressbook",
+        "ledger",
+        "--home",
+        "demo-home"
+      ],
+      "exit": 0
+    },
+    {
+      "cmd": [
+        "egressbook",
+        "report",
+        "--html",
+        "report.html",
+        "--home",
+        "demo-home"
+      ],
+      "exit": 0
+    },
+    {
+      "cmd": [
+        "egressbook",
+        "diff",
+        "--since",
+        "1w",
+        "--home",
+        "demo-home"
+      ],
+      "exit": 0
+    },
+    {
+      "cmd": [
+        "egressbook",
+        "verify",
+        "ledger.json"
+      ],
+      "exit": 0
+    }
+  ],
+  "observed": {
+    "harnesses_detected": [
+      "zcode",
+      "codex",
+      "claude-code"
+    ],
+    "sessions_found": 3,
+    "sessions_parsed": 3,
+    "items": 11,
+    "destination_map_bytes": {
+      "Zhipu (GLM)": 240,
+      "OpenAI": 154,
+      "Anthropic (Claude)": 63
+    },
+    "payload_kinds": {
+      "system_prompt": 129,
+      "user_message": 134,
+      "tool_result": 150,
+      "git_artifact": 44
+    },
+    "signature": "ed25519, verify OK",
+    "coverage_gaps_reported": [
+      "claude-code: system prompt is harness-side and not written to session logs",
+      "claude-code: model provider is not recorded per-session in the log"
+    ]
+  },
+  "version": "0.1.0",
+  "recorded_at": "2026-09-18T20:41:41Z"
+}

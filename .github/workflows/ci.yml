@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test ./... -v
+      - name: Build
+        run: go build ./...
+      - name: Smoke (sample home)
+        run: |
+          go build -o /tmp/egressbook ./cmd/egressbook
+          mkdir -p /tmp/h/.zcode/cli/rollout /tmp/h/.codex/sessions/2026/03/31 /tmp/h/.claude/projects/-proj /tmp/data
+          cp testdata/samples/zcode_sample.jsonl /tmp/h/.zcode/cli/rollout/model-io-sess-test.jsonl
+          cp testdata/samples/codex_sample.jsonl /tmp/h/.codex/sessions/2026/03/31/rollout-test.jsonl
+          cp testdata/samples/claude_sample.jsonl /tmp/h/.claude/projects/-proj/abc.jsonl
+          /tmp/egressbook scan --home /tmp/h
+          /tmp/egressbook ledger --home /tmp/h --data-dir /tmp/data --out /tmp/data/ledger.json
+          /tmp/egressbook verify /tmp/data/ledger.json
+          /tmp/egressbook report --home /tmp/h --data-dir /tmp/data --html /tmp/data/report.html
+          /tmp/egressbook diff --home /tmp/h --data-dir /tmp/data --since 1w

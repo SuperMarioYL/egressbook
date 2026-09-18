@@ -1,0 +1,11 @@
+# build-session scaffolding — never committed
+BUILD_SETUP_NEXT_STEPS.md
+.spawn.*
+.builder_*
+.build_metadata*
+.stage_*
+.egressbook/
+*.egressbook.ed25519
+# go
+dist/
+*.test
