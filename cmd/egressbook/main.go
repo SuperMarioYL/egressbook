@@ -6,6 +6,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"time"
@@ -19,7 +20,7 @@ import (
 	"github.com/SuperMarioYL/egressbook/internal/report"
 )
 
-var version = "0.1.0"
+var version = "0.2.0"
 
 func main() {
 	root := &cobra.Command{
@@ -163,6 +164,10 @@ func collect(home string) ([]ingest.RawEvent, []model.Coverage, map[string]int, 
 		d := ingest.Discover(root.Harness, root.Dir)
 		c := model.Coverage{Harness: root.Harness, SessionsFound: len(d.Files)}
 		sessions[root.Harness] = len(d.Files)
+		// Discovery gaps (absent log root, root is not a directory) are as
+		// load-bearing as parse gaps: without them a harness that is not
+		// installed is indistinguishable from one that logged nothing.
+		gaps[root.Harness] = append(gaps[root.Harness], d.Gaps...)
 		for _, f := range d.Files {
 			var evs []ingest.RawEvent
 			var gg []string
@@ -274,19 +279,24 @@ func loadLedger(path string) (*model.Ledger, error) {
 }
 
 func parseSince(s string) (time.Duration, error) {
-	var n int
+	var n int64
 	var unit string
-	if _, err := fmt.Sscanf(s, "%d%s", &n, &unit); err != nil {
-		return 0, fmt.Errorf("bad --since %q (use e.g. 2w or 72h)", s)
+	if _, err := fmt.Sscanf(s, "%d%s", &n, &unit); err != nil || n <= 0 {
+		return 0, fmt.Errorf("bad --since %q (use a positive duration, e.g. 2w or 72h)", s)
 	}
+	var perUnit time.Duration
 	switch unit {
 	case "h":
-		return time.Duration(n) * time.Hour, nil
+		perUnit = time.Hour
 	case "d":
-		return time.Duration(n) * 24 * time.Hour, nil
+		perUnit = 24 * time.Hour
 	case "w":
-		return time.Duration(n) * 7 * 24 * time.Hour, nil
+		perUnit = 7 * 24 * time.Hour
 	default:
 		return 0, fmt.Errorf("unknown --since unit %q (h/d/w)", unit)
 	}
+	if n > int64(math.MaxInt64)/int64(perUnit) {
+		return 0, fmt.Errorf("--since %q is too large", s)
+	}
+	return time.Duration(n) * perUnit, nil
 }

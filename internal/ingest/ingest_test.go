@@ -93,6 +93,23 @@ func TestClassifyText(t *testing.T) {
 	}
 }
 
+// TestClassifyRealGitDiff: a real diff carries hunk-body lines that look like
+// path headers (" src/server.go:"), and the git_artifact marker must win.
+func TestClassifyRealGitDiff(t *testing.T) {
+	diff := "diff --git a/src/server.go b/src/server.go\n" +
+		"index 1a2b3c4..5d6e7f8 100644\n" +
+		"--- a/src/server.go\n" +
+		"+++ b/src/server.go\n" +
+		"@@ -1,4 +1,5 @@\n" +
+		" package main\n" +
+		" \n" +
+		" src/server.go:\n" +
+		"+// added\n"
+	if got := ClassifyText(diff); got != model.KindGitArtifact {
+		t.Errorf("ClassifyText(real diff) = %s, want %s", got, model.KindGitArtifact)
+	}
+}
+
 func TestDiscoverMissingDir(t *testing.T) {
 	dir := t.TempDir()
 	res := Discover("zcode", filepath.Join(dir, "nope"))

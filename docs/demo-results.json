@@ -76,6 +76,6 @@
       "claude-code: model provider is not recorded per-session in the log"
     ]
   },
-  "version": "0.1.0",
-  "recorded_at": "2026-09-18T20:41:41Z"
+  "version": "0.2.0",
+  "recorded_at": "2026-10-25T19:20:00Z"
 }

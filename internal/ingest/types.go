@@ -86,18 +86,21 @@ var (
 )
 
 // ClassifyText maps a payload block to an item kind using honest, conservative
-// heuristics: a block is file_content when it carries a path header or a
-// path-prefenced fenced block, code_snippet for bare fences, else user text.
+// heuristics, strongest signal first: an explicit git-diff header, then a
+// path header (or a path-prefaced fenced block), then a bare fence, else user
+// text.
 func ClassifyText(text string) model.ItemKind {
+	// The diff header must win over the path heuristic below: real diffs carry
+	// hunk-body lines (e.g. " src/server.go:") that look like path headers.
+	if strings.Contains(text, "diff --git") || strings.HasPrefix(strings.TrimSpace(text), "@@ ") {
+		return model.KindGitArtifact
+	}
 	lines := strings.Split(text, "\n")
 	for _, ln := range lines {
 		trimmed := strings.TrimRight(ln, "\r")
 		if trimmed != "" && pathHeadRe.MatchString(strings.TrimSpace(trimmed)) {
 			return model.KindFileContent
 		}
-	}
-	if strings.Contains(text, "diff --git") || strings.HasPrefix(strings.TrimSpace(text), "@@ ") {
-		return model.KindGitArtifact
 	}
 	if fenceRe.MatchString(text) {
 		return model.KindCodeSnippet

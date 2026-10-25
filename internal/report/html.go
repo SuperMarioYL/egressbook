@@ -128,15 +128,14 @@ func HTML(w io.Writer, l *model.Ledger) error {
 	return tmpl.Execute(w, data)
 }
 
+// shortFile abbreviates a log path for the report while keeping the file name:
+// the evidence locator must stay identifiable, so the parent directory and the
+// file are kept and longer paths are prefixed with "…/".
 func shortFile(p string) string {
-	const keep = 2
-	for i := 0; i < keep; i++ {
-		if j := lastSlash(p); j >= 0 {
-			p = p[:j]
+	if i := lastSlash(p); i >= 0 {
+		if j := lastSlash(p[:i]); j >= 0 {
+			return "…/" + p[j+1:]
 		}
-	}
-	if lastSlash(p) >= 0 {
-		p = p[lastSlash(p)+1:]
 	}
 	return p
 }

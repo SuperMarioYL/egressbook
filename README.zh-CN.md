@@ -9,7 +9,7 @@
 <a href="https://github.com/SuperMarioYL/egressbook/actions"><img src="https://img.shields.io/github/actions/workflow/status/SuperMarioYL/egressbook/ci.yml?style=flat-square&label=CI" alt="CI" /></a>
 <a href="https://github.com/SuperMarioYL/egressbook/releases"><img src="https://img.shields.io/badge/Go-1.24+-00ADD8?style=flat-square&logo=go&logoColor=white" alt="Go" /></a>
 <a href="https://github.com/SuperMarioYL/egressbook/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-58A6FF?style=flat-square" alt="License" /></a>
-<a href="https://github.com/SuperMarioYL/egressbook/releases"><img src="https://img.shields.io/badge/version-0.1.0-58A6FF?style=flat-square" alt="Version" /></a>
+<a href="https://github.com/SuperMarioYL/egressbook/releases"><img src="https://img.shields.io/badge/version-0.2.0-58A6FF?style=flat-square" alt="Version" /></a>
 
 <br/>
 <br/>

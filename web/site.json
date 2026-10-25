@@ -129,7 +129,7 @@
   },
   "limitations": [
     "The ledger reconstructs everything logged, not everything sent — channels absent from local logs cannot be attested and are labeled as gaps.",
-    "v0.1 ships parsers for ZCode, Codex, and Claude Code session logs; Cursor support is on the roadmap.",
+    "v0.2 ships parsers for ZCode, Codex, and Claude Code session logs; Cursor support is on the roadmap.",
     "Classification of file_content / code_snippet uses conservative path-and-fence heuristics; borderline blocks may be labeled user_message."
   ],
   "scene": {
